@@ -1,10 +1,12 @@
 import Hapi from 'hapi';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const server = new Hapi.Server({
-  host: '127.0.0.1',
-  port: '8080',
+  host: isProduction ? '0.0.0.0' : 'localhost',
+  port: process.env.PORT || 8080,
   routes: {
-    cors: { origin: 'ignore' },
+    cors: { origin: ['*'] },
   },
 });
 
