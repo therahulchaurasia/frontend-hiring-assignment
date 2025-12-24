@@ -8,15 +8,31 @@ const server = new Hapi.Server({
   },
 });
 
+server.ext('onRequest', (request, h) => {
+  console.log(`[IN] ${request.method.toUpperCase()} ${request.path}`);
+  return h.continue;
+});
+
+server.events.on('response', (request) => {
+  const status = request.response ? request.response.statusCode : 0;
+  console.log(
+    `[OUT] ${status} ${request.method.toUpperCase()} ${request.path}`,
+  );
+});
+
 async function main() {
-  await server.register([{
-    plugin: require('./shifts-mock-api'),
-    routes: { prefix: '/shifts' },
-  }]);
+  await server.register([
+    {
+      plugin: require('./shifts-mock-api'),
+      routes: { prefix: '/shifts' },
+    },
+  ]);
 
   await server.start();
 
-  console.info(`✅  API server is listening at ${server.info.uri.toLowerCase()}`);
+  console.info(
+    `✅  API server is listening at ${server.info.uri.toLowerCase()}`,
+  );
 }
 
 main();
